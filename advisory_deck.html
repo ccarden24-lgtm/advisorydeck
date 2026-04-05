@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomy of the Financial Advisory Business</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e8e6df;height:100vh;overflow:hidden}
+  .deck{width:100%;height:100vh;position:relative}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;padding:44px 60px 56px;opacity:0;transition:opacity .3s}
+  .slide.active{display:flex;opacity:1}
+  .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;z-index:99}
+  .nav button{background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+  .nav button:hover{background:rgba(255,255,255,.25)}
+  .nav .counter{font-size:12px;color:rgba(255,255,255,.4);min-width:52px;text-align:center}
+  .dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;max-width:260px;justify-content:center}
+  .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:background .2s}
+  .dot.active{background:#fff}
+  .slide-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:14px}
+  /* title */
+  .s-title{background:linear-gradient(135deg,#0f1117 0%,#1a1f35 100%);justify-content:center}
+  .s-title h1{font-size:40px;font-weight:700;line-height:1.15;max-width:660px;background:linear-gradient(90deg,#fff 0%,#9ba8c4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .s-title .sub{font-size:16px;color:rgba(255,255,255,.4);margin-top:14px}
+  .s-title .accent{width:52px;height:4px;background:linear-gradient(90deg,#4a7cf8,#7b5ea7);border-radius:2px;margin-bottom:24px}
+  /* section header */
+  .s-section{justify-content:center;align-items:flex-start}
+  .s-section .num{font-size:72px;font-weight:800;color:rgba(255,255,255,.05);line-height:1;margin-bottom:-14px}
+  .s-section h2{font-size:34px;font-weight:700;color:#fff}
+  .s-section p{font-size:14px;color:rgba(255,255,255,.42);margin-top:10px;max-width:540px;line-height:1.65}
+  /* content */
+  .s-content h2{font-size:24px;font-weight:700;margin-bottom:4px;color:#fff}
+  .s-content .deck-sub{font-size:13px;color:rgba(255,255,255,.38);margin-bottom:20px}
+  .cards{display:grid;gap:12px}
+  .cards.col2{grid-template-columns:1fr 1fr}
+  .cards.col3{grid-template-columns:1fr 1fr 1fr}
+  .cards.col4{grid-template-columns:1fr 1fr 1fr 1fr}
+  .card{border-radius:10px;padding:16px 18px;border:1px solid rgba(255,255,255,.08)}
+  .card .c-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;opacity:.7}
+  .card h3{font-size:14px;font-weight:600;margin-bottom:5px;color:#fff}
+  .card p{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.58)}
+  .card ul{margin-left:13px;margin-top:3px}
+  .card ul li{font-size:12.5px;color:rgba(255,255,255,.58);line-height:1.6}
+  .blue{background:rgba(74,124,248,.09);border-color:rgba(74,124,248,.28)} .blue .c-label{color:#7ba3fb}
+  .teal{background:rgba(29,158,117,.09);border-color:rgba(29,158,117,.28)} .teal .c-label{color:#4ecba0}
+  .purple{background:rgba(123,94,167,.09);border-color:rgba(123,94,167,.28)} .purple .c-label{color:#a98fd4}
+  .amber{background:rgba(186,117,23,.09);border-color:rgba(186,117,23,.28)} .amber .c-label{color:#e0a435}
+  .coral{background:rgba(216,90,48,.09);border-color:rgba(216,90,48,.28)} .coral .c-label{color:#f07a52}
+  .green{background:rgba(99,153,34,.09);border-color:rgba(99,153,34,.28)} .green .c-label{color:#8bc447}
+  .pink{background:rgba(212,83,126,.09);border-color:rgba(212,83,126,.28)} .pink .c-label{color:#e87aaa}
+  .gray{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09)} .gray .c-label{color:rgba(255,255,255,.42)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);padding:7px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.1)}
+  td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.7);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td:first-child{color:#fff;font-weight:500}
+  .pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+  .pill-blue{background:rgba(74,124,248,.18);color:#7ba3fb}
+  .pill-teal{background:rgba(29,158,117,.18);color:#4ecba0}
+  .pill-amber{background:rgba(186,117,23,.18);color:#e0a435}
+  .pill-coral{background:rgba(216,90,48,.18);color:#f07a52}
+  .pill-purple{background:rgba(123,94,167,.18);color:#a98fd4}
+  .pill-green{background:rgba(99,153,34,.18);color:#8bc447}
+  .s-takeaway{background:linear-gradient(135deg,#131830 0%,#1a1225 100%);justify-content:center}
+  .s-takeaway h2{font-size:26px;font-weight:700;margin-bottom:20px;color:#fff}
+  .tklist{display:flex;flex-direction:column;gap:11px;max-width:700px}
+  .tkitem{display:flex;gap:13px;align-items:flex-start}
+  .tknum{width:24px;height:24px;border-radius:50%;background:rgba(74,124,248,.2);color:#7ba3fb;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .tkitem p{font-size:13px;color:rgba(255,255,255,.68);line-height:1.55}
+  /* landscape map */
+  .map-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+  .map-col{display:flex;flex-direction:column;gap:8px}
+  .map-header{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;border-radius:6px;text-align:center}
+  .map-item{border-radius:8px;padding:10px 12px;border:1px solid rgba(255,255,255,.07);font-size:12px;color:rgba(255,255,255,.65);line-height:1.45}
+  .map-item strong{display:block;font-size:12.5px;color:#fff;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ═══════════════════════════════════════
+     PART 0 — INTRO
+═══════════════════════════════════════ -->
+<!-- SLIDE 1: TITLE -->
+<div class="slide s-title active" id="s1">
+  <div class="accent"></div>
+  <h1>Anatomy of the Financial Industry</h1>
+  <p class="sub">From the broad landscape of finance to the structure of the financial advisory business</p>
+</div>
+
+<!-- SLIDE 2: AGENDA -->
+<div class="slide s-content" id="s2">
+  <div class="slide-label">Overview</div>
+  <h2>What we'll cover</h2>
+  <div class="deck-sub">A top-down journey through the financial industry</div>
+  <div class="cards col2">
+    <div class="card blue"><div class="c-label">Part 1</div><h3>Finance at large</h3><p>The major sectors of the financial industry — banks, asset managers, insurers, exchanges, fintechs — and how they differ in purpose and business model.</p></div>
+    <div class="card gray"><div class="c-label">Part 2</div><h3>The advisory channel</h3><p>A closer look at the firms that provide financial advice: wirehouses, independent RIAs, IBDs, and bank/insurance channels.</p></div>
+    <div class="card teal"><div class="c-label">Part 3</div><h3>Regulatory structure</h3><p>BD vs. RIA registration, the suitability vs. fiduciary standard, and what "dually registered" really means.</p></div>
+    <div class="card green"><div class="c-label">Part 4</div><h3>Advisor designations &amp; compensation</h3><p>Key credentials (CFP®, CFA®, CPA/PFS) and how advisor compensation models create — or limit — conflicts of interest.</p></div>
+    <div class="card coral" style="grid-column:1/-1"><div class="c-label">Part 5</div><h3>Client segments</h3><p>Mass market through ultra-high net worth — and how service models, staffing, and technology differ at each tier.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PART 1 — FINANCE AT LARGE
+═══════════════════════════════════════ -->
+<!-- SLIDE 3: SECTION HEADER -->
+<div class="slide s-section" id="s3" style="background:linear-gradient(135deg,#0f1117,#0f1a2e)">
+  <div class="num">01</div>
+  <h2>Finance at Large</h2>
+  <p>The financial industry is not monolithic. It is a collection of distinct sectors — each with a different primary function, customer, revenue model, and regulatory framework.</p>
+</div>
+
+<!-- SLIDE 4: LANDSCAPE MAP -->
+<div class="slide s-content" id="s4">
+  <div class="slide-label">Finance at large</div>
+  <h2>The financial industry landscape</h2>
+  <div class="deck-sub">Six major sectors — different purposes, different customers, different business models</div>
+  <div class="map-grid">
+    <div class="map-col">
+      <div class="map-header" style="background:rgba(74,124,248,.15);color:#7ba3fb">Banking</div>
+      <div class="map-item"><strong>Retail / commercial banks</strong>Deposits, lending, payments</div>
+      <div class="map-item"><strong>Investment banks</strong>Capital markets, M&amp;A, trading</div>
+      <div class="map-item"><strong>Central banks</strong>Monetary policy, system stability</div>
+    </div>
+    <div class="map-col">
+      <div class="map-header" style="background:rgba(29,158,117,.15);color:#4ecba0">Asset management</div>
+      <div class="map-item"><strong>Mutual fund companies</strong>Pooled retail vehicles</div>
+      <div class="map-item"><strong>ETF providers</strong>Index &amp; active strategies</div>
+      <div class="map-item"><strong>Hedge funds / PE / VC</strong>Alternatives, institutional</div>
+    </div>
+    <div class="map-col">
+      <div class="map-header" style="background:rgba(123,94,167,.15);color:#a98fd4">Advisory / wealth mgmt</div>
+      <div class="map-item"><strong>Wirehouses</strong>Full-service brokerage</div>
+      <div class="map-item"><strong>Independent RIAs</strong>Fee-only fiduciary advice</div>
+      <div class="map-item"><strong>IBDs &amp; captive channels</strong>Hybrid distribution</div>
+    </div>
+    <div class="map-col">
+      <div class="map-header" style="background:rgba(186,117,23,.15);color:#e0a435">Other sectors</div>
+      <div class="map-item"><strong>Insurance companies</strong>Risk transfer, protection</div>
+      <div class="map-item"><strong>Exchanges &amp; clearing</strong>Market infrastructure</div>
+      <div class="map-item"><strong>Fintech</strong>Payments, lending, robo-advice</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: BANKING -->
+<div class="slide s-content" id="s5">
+  <div class="slide-label">Finance at large · Banking</div>
+  <h2>Banking</h2>
+  <div class="deck-sub">The core financial intermediary — connecting savers to borrowers</div>
+  <div class="cards col3">
+    <div class="card blue"><div class="c-label">Retail &amp; commercial banks</div><h3>Deposits &amp; lending</h3><p>Accept deposits, extend loans (mortgages, auto, commercial), provide checking/savings accounts and payment services. Revenue model: net interest margin (spread between deposit rates and loan rates).</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: JPMorgan Chase, Bank of America, Wells Fargo, Regions, Truist</p></div>
+    <div class="card blue"><div class="c-label">Investment banks</div><h3>Capital markets &amp; advisory</h3><p>Help corporations and governments raise capital (IPOs, debt issuance), advise on M&amp;A transactions, and facilitate large securities trades. Do not take retail deposits. Revenue: fees and trading spreads.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: Goldman Sachs, Morgan Stanley, JPMorgan (IB division), Lazard</p></div>
+    <div class="card gray"><div class="c-label">Universal banks</div><h3>Both under one roof</h3><p>Large institutions that combine retail banking, commercial lending, investment banking, and wealth management. The dominant U.S. model post-Gramm-Leach-Bliley (1999), which repealed Glass-Steagall separation.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: JPMorgan Chase, Bank of America, Citigroup</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 6: ASSET MANAGEMENT -->
+<div class="slide s-content" id="s6">
+  <div class="slide-label">Finance at large · Asset management</div>
+  <h2>Asset Management</h2>
+  <div class="deck-sub">Firms that invest capital on behalf of others — in exchange for a management fee</div>
+  <div class="cards col2">
+    <div class="card teal"><div class="c-label">Traditional / long-only managers</div><h3>Mutual funds &amp; ETFs</h3><p>Manage pooled investment vehicles — active mutual funds or passive index strategies — distributed to retail and institutional investors. Revenue: expense ratios (basis points on AUM). Fee compression has been dramatic over the past 20 years.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: Vanguard, Fidelity, BlackRock, T. Rowe Price, American Funds</p></div>
+    <div class="card teal"><div class="c-label">Alternative asset managers</div><h3>Hedge funds, private equity, venture capital</h3><p>Manage concentrated, often illiquid strategies for institutional investors and accredited individuals. Typical fee structure: "2 and 20" (2% management fee + 20% of profits). Increasingly democratized through interval funds and private credit vehicles.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: Blackstone, KKR, Citadel, Sequoia, Bridgewater</p></div>
+    <div class="card gray"><div class="c-label">Institutional asset managers</div><h3>Pension, endowment &amp; sovereign wealth</h3><p>Manage large pools of capital for specific institutional mandates — public pensions, corporate pensions, university endowments, foundations, and sovereign wealth funds. Custom mandates, long time horizons, liability-driven investing.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: PIMCO, Wellington, State Street Global Advisors</p></div>
+    <div class="card gray"><div class="c-label">Key distinction from advisory</div><h3>Asset managers don't advise — they manage</h3><p>Asset managers run the portfolios that advisors put clients in. They are the product manufacturers. Financial advisors select from asset managers' products on behalf of clients — the two roles are distinct, though some firms do both.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 7: INSURANCE -->
+<div class="slide s-content" id="s7">
+  <div class="slide-label">Finance at large · Insurance</div>
+  <h2>Insurance Companies</h2>
+  <div class="deck-sub">Risk transfer businesses that also function as major capital allocators</div>
+  <div class="cards col3">
+    <div class="card amber"><div class="c-label">Life &amp; health insurers</div><h3>Protection &amp; income</h3><p>Provide life insurance, disability insurance, long-term care coverage, and annuities. Annuities blur the line between insurance and investment — they are a major product in the wealth management space.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: Northwestern Mutual, MassMutual, New York Life, Prudential</p></div>
+    <div class="card amber"><div class="c-label">P&amp;C insurers</div><h3>Property &amp; casualty</h3><p>Cover losses from accidents, natural disasters, liability events. Less relevant to wealth management directly, but relevant to HNW planning (umbrella policies, private client insurance for art, jewelry, property).</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Examples: State Farm, Allstate, Chubb, AIG</p></div>
+    <div class="card gray"><div class="c-label">Role in wealth management</div><h3>Distribution and product</h3><p>Life insurance companies are major product manufacturers for wealth advisors — annuities, life insurance, and disability products flow through captive agents or independent channels. Many life insurers also own or affiliate with broker-dealers.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 8: EXCHANGES & INFRASTRUCTURE -->
+<div class="slide s-content" id="s8">
+  <div class="slide-label">Finance at large · Market infrastructure</div>
+  <h2>Exchanges, Custodians &amp; Market Infrastructure</h2>
+  <div class="deck-sub">The plumbing that makes markets and advice delivery possible</div>
+  <div class="cards col2">
+    <div class="card purple"><div class="c-label">Exchanges &amp; trading venues</div><h3>Where securities are bought and sold</h3><p>Stock exchanges (NYSE, Nasdaq) and alternative trading systems (dark pools, ECNs) provide the marketplace for securities transactions. Revenue: listing fees, transaction fees, data fees. Increasingly dominated by electronic market makers.</p></div>
+    <div class="card purple"><div class="c-label">Clearing &amp; settlement</div><h3>The post-trade layer</h3><p>Clearinghouses (DTCC, Options Clearing Corp) guarantee trades and manage counterparty risk. Settlement (T+1 in the U.S. as of 2024) is the process of actually transferring cash and securities after a trade.</p></div>
+    <div class="card gray"><div class="c-label">Custodians</div><h3>Critical to the advisory business</h3><p>Custodians hold client assets on behalf of RIAs and IBDs — they are the safekeeping layer. Advisors use custodian platforms for trading, reporting, and account management. Not the same as the advisor's firm.</p><p style="margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.38)">Major custodians: Charles Schwab, Fidelity Institutional, Pershing (BNY Mellon)</p></div>
+    <div class="card gray"><div class="c-label">Fintech</div><h3>Disrupting every layer</h3><p>Fintechs operate across banking (Chime, SoFi), lending (LendingClub), payments (Stripe, PayPal), robo-advice (Betterment, Wealthfront), and financial planning software (eMoney, MoneyGuidePro). Often B2B infrastructure for traditional advisors.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 9: HOW THE SECTORS INTERACT -->
+<div class="slide s-content" id="s9">
+  <div class="slide-label">Finance at large · Connections</div>
+  <h2>How the sectors interact</h2>
+  <div class="deck-sub">No sector operates in isolation — here's how they connect in a client's financial life</div>
+  <table>
+    <thead><tr><th>Sector</th><th>Primary function</th><th>Revenue model</th><th>Relationship to advisory</th></tr></thead>
+    <tbody>
+      <tr><td>Retail / commercial bank</td><td>Deposits, loans, payments</td><td>Net interest margin</td><td>Referral source; competes for wallet share</td></tr>
+      <tr><td>Investment bank</td><td>Capital markets, M&amp;A</td><td>Transaction fees</td><td>Relevant for business-owner clients; separate world</td></tr>
+      <tr><td>Asset manager</td><td>Invest pooled capital</td><td>Expense ratios, management fees</td><td><strong>Product manufacturer</strong> — advisors select their funds</td></tr>
+      <tr><td>Insurance company</td><td>Risk transfer, annuities</td><td>Premiums, spreads</td><td><strong>Product manufacturer</strong> — advisors place insurance/annuities</td></tr>
+      <tr><td>Custodian</td><td>Safekeep assets, execute trades</td><td>Platform &amp; service fees</td><td><strong>Operating infrastructure</strong> for RIAs and IBDs</td></tr>
+      <tr><td>Wirehouse / RIA / IBD</td><td>Financial advice</td><td>AUM fees, commissions</td><td><strong>This is the advisory channel</strong></td></tr>
+      <tr><td>Fintech</td><td>Technology-enabled financial services</td><td>Subscriptions, interchange, AUM</td><td>Competitor at low end; tools provider at high end</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PART 2 — ADVISORY CHANNEL
+═══════════════════════════════════════ -->
+<!-- SLIDE 10: SECTION HEADER -->
+<div class="slide s-section" id="s10" style="background:linear-gradient(135deg,#0f1117,#1a1f35)">
+  <div class="num">02</div>
+  <h2>The Advisory Channel</h2>
+  <p>Within the broader financial industry, the advisory channel is the segment focused on delivering personalized financial guidance to individuals, families, and institutions.</p>
+</div>
+
+<!-- SLIDE 11: WIREHOUSES -->
+<div class="slide s-content" id="s11">
+  <div class="slide-label">Advisory channel · 01 of 04</div>
+  <h2>Wirehouses</h2>
+  <div class="deck-sub">The traditional full-service brokerage model</div>
+  <div class="cards col2">
+    <div class="card blue"><div class="c-label">Examples</div><h3>The "Big Four"</h3><ul><li>Merrill Lynch (Bank of America)</li><li>Morgan Stanley Wealth Management</li><li>UBS Wealth Management</li><li>Wells Fargo Advisors</li></ul></div>
+    <div class="card gray"><div class="c-label">Structure</div><h3>Employee model</h3><p>Advisors are W-2 employees. They operate under the firm's BD license and use proprietary platforms, research, and products. The firm controls the client relationship legally.</p></div>
+    <div class="card gray"><div class="c-label">Economics</div><h3>Grid-based payout</h3><p>Advisors typically receive 35–45% of production. Firms retain the rest for overhead, compliance, and profit. Grid-based structures incentivize revenue growth.</p></div>
+    <div class="card blue"><div class="c-label">Client profile</div><h3>Full spectrum, HNW-focused</h3><p>Wirehouses serve all segments but have invested heavily in private banking and family office capabilities for HNW/UHNW clients.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 12: RIAs -->
+<div class="slide s-content" id="s12">
+  <div class="slide-label">Advisory channel · 02 of 04</div>
+  <h2>Independent RIAs</h2>
+  <div class="deck-sub">The fastest-growing channel in the industry</div>
+  <div class="cards col2">
+    <div class="card teal"><div class="c-label">Definition</div><h3>Registered Investment Advisers</h3><p>Registered directly with the SEC (AUM ≥ $100M) or state regulators. No affiliation to a broker-dealer or product manufacturer. Full fiduciary obligation to clients.</p></div>
+    <div class="card teal"><div class="c-label">Examples</div><h3>Wide range of sizes</h3><ul><li>Solo practitioners ($50M–$250M AUM)</li><li>Ensemble firms ($250M–$2B)</li><li>Large RIAs: Fisher, Creative Planning, Edelman, Capital Investment Advisors</li></ul></div>
+    <div class="card gray"><div class="c-label">Fiduciary duty</div><h3>Legally required to act in client's best interest</h3><p>Unlike BDs, RIAs cannot recommend a product simply because it's "suitable." They owe clients an ongoing duty of loyalty and care.</p></div>
+    <div class="card gray"><div class="c-label">Custodians</div><h3>Third-party custody</h3><p>RIAs use independent custodians — Schwab, Fidelity, Pershing — rather than holding client assets directly, providing an important safety layer.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 13: IBDs -->
+<div class="slide s-content" id="s13">
+  <div class="slide-label">Advisory channel · 03 of 04</div>
+  <h2>Independent Broker-Dealers (IBDs)</h2>
+  <div class="deck-sub">The middle ground between wirehouse and pure independence</div>
+  <div class="cards col2">
+    <div class="card purple"><div class="c-label">Examples</div><h3>Major IBDs</h3><ul><li>LPL Financial (largest in the U.S.)</li><li>Raymond James Financial Services</li><li>Ameriprise Financial</li><li>Commonwealth Financial Network</li></ul></div>
+    <div class="card purple"><div class="c-label">Structure</div><h3>Contractor model</h3><p>Advisors are independent contractors (1099) who affiliate with the IBD to use its BD license, compliance infrastructure, and technology platform.</p></div>
+    <div class="card gray"><div class="c-label">Economics</div><h3>Higher payout, more overhead</h3><p>Advisors typically retain 80–95% of production but pay their own overhead (rent, staff, technology). Greater autonomy, less firm support.</p></div>
+    <div class="card gray"><div class="c-label">Product shelf</div><h3>Open architecture</h3><p>IBD advisors have access to a broader product shelf than wirehouse advisors, though the IBD may still have preferred vendor agreements.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 14: BANKS & INSURANCE -->
+<div class="slide s-content" id="s14">
+  <div class="slide-label">Advisory channel · 04 of 04</div>
+  <h2>Banks &amp; Insurance-Based Channels</h2>
+  <div class="deck-sub">Captive distribution tied to a parent institution</div>
+  <div class="cards col2">
+    <div class="card amber"><div class="c-label">Bank-based advisors</div><h3>Branch referral model</h3><p>Advisors placed inside retail bank branches. Referrals come from tellers and bankers. Heavy focus on managed accounts, annuities, and simple planning for mass-market clients.</p></div>
+    <div class="card amber"><div class="c-label">Insurance-based</div><h3>Captive agents</h3><p>Agents (Northwestern Mutual, New York Life, MassMutual) are primarily trained on insurance and annuity products. Many pursue CFP® credentials to expand into broader planning.</p></div>
+    <div class="card gray"><div class="c-label">Limitations</div><h3>Narrow product shelf</h3><p>Captive advisors typically sell only proprietary or approved products, limiting objectivity. Conflicts must be disclosed but are structural to the model.</p></div>
+    <div class="card gray"><div class="c-label">Strengths</div><h3>Distribution at scale</h3><p>Many Americans get their first financial guidance through a bank or insurance channel. Strong for protection-based planning (life, disability, long-term care).</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PART 3 — REGULATORY STRUCTURE
+═══════════════════════════════════════ -->
+<!-- SLIDE 15: SECTION HEADER -->
+<div class="slide s-section" id="s15" style="background:linear-gradient(135deg,#0f1117,#1a1f0f)">
+  <div class="num">03</div>
+  <h2>Regulatory Structure</h2>
+  <p>The legal framework governing advisors determines their obligations to clients. The distinction between suitability and fiduciary standards is the most important concept for clients to understand.</p>
+</div>
+
+<!-- SLIDE 16: BD vs RIA -->
+<div class="slide s-content" id="s16">
+  <div class="slide-label">Regulatory structure</div>
+  <h2>Broker-Dealer vs. RIA Registration</h2>
+  <div class="deck-sub">The most important distinction clients often don't know to ask about</div>
+  <table style="margin-top:8px">
+    <thead><tr><th></th><th>Broker-Dealer (BD)</th><th>Investment Adviser (RIA)</th></tr></thead>
+    <tbody>
+      <tr><td>Regulator</td><td>FINRA + SEC</td><td>SEC or State</td></tr>
+      <tr><td>Standard of care</td><td><span class="pill pill-amber">Suitability</span> (Reg BI)</td><td><span class="pill pill-teal">Fiduciary</span></td></tr>
+      <tr><td>Compensation</td><td>Commissions, trails, 12b-1 fees</td><td>Advisory fees (AUM, flat, hourly)</td></tr>
+      <tr><td>Conflicts of interest</td><td>Must disclose and mitigate (Reg BI)</td><td>Must eliminate or fully disclose</td></tr>
+      <tr><td>Ongoing duty to client</td><td>At time of recommendation</td><td>Continuous ongoing obligation</td></tr>
+      <tr><td>Account types</td><td>Brokerage accounts</td><td>Managed / advisory accounts</td></tr>
+      <tr><td>Key disclosure form</td><td>Form U4 (CRD / BrokerCheck)</td><td>Form ADV (IAPD)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SLIDE 17: DUALLY REGISTERED -->
+<div class="slide s-content" id="s17">
+  <div class="slide-label">Regulatory structure</div>
+  <h2>Dually Registered Advisors</h2>
+  <div class="deck-sub">Common at wirehouses and large IBDs — and a source of frequent client confusion</div>
+  <div class="cards col2">
+    <div class="card coral"><div class="c-label">What it means</div><h3>Wearing two hats</h3><p>An advisor is registered as both a registered representative (BD) and an investment adviser representative (IAR). They can act in either capacity depending on the account type.</p></div>
+    <div class="card gray"><div class="c-label">Why it matters</div><h3>The standard shifts by account</h3><p>In a brokerage account, they owe suitability. In an advisory account, they owe fiduciary duty. Clients may not realize which standard applies to which recommendation.</p></div>
+    <div class="card gray"><div class="c-label">Disclosure</div><h3>Form CRS</h3><p>Reg BI (effective 2020) requires broker-dealers to provide a Client Relationship Summary (Form CRS) disclosing registration type, services offered, and material conflicts.</p></div>
+    <div class="card coral"><div class="c-label">The right question</div><h3>"Are you a fiduciary — for all my accounts, all the time?"</h3><p>A "yes" in one context doesn't guarantee it in another. Clients should ask this explicitly and review the advisor's Form CRS and ADV Part 2.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PART 4 — DESIGNATIONS & COMP
+═══════════════════════════════════════ -->
+<!-- SLIDE 18: SECTION HEADER -->
+<div class="slide s-section" id="s18" style="background:linear-gradient(135deg,#0f1117,#0f201a)">
+  <div class="num">04</div>
+  <h2>Designations &amp; Compensation</h2>
+  <p>Credentials signal training and expertise. Compensation structures reveal incentives. Together, they tell you a great deal about how an advisor approaches their work.</p>
+</div>
+
+<!-- SLIDE 19: DESIGNATIONS TABLE -->
+<div class="slide s-content" id="s19">
+  <div class="slide-label">Designations</div>
+  <h2>Key Credentials</h2>
+  <div class="deck-sub">The most recognized and rigorous designations in wealth management</div>
+  <table>
+    <thead><tr><th>Credential</th><th>Issued by</th><th>Focus area</th><th>Typical holder</th></tr></thead>
+    <tbody>
+      <tr><td>CFP® — Certified Financial Planner</td><td>CFP Board</td><td>Comprehensive financial planning</td><td>Financial planners, wealth managers</td></tr>
+      <tr><td>CFA® — Chartered Financial Analyst</td><td>CFA Institute</td><td>Investment analysis &amp; portfolio mgmt</td><td>Portfolio managers, analysts</td></tr>
+      <tr><td>CPA/PFS — Personal Financial Specialist</td><td>AICPA</td><td>Tax-integrated financial planning</td><td>CPAs expanding into planning</td></tr>
+      <tr><td>ChFC® — Chartered Financial Consultant</td><td>The American College</td><td>Insurance &amp; advanced planning</td><td>Insurance-based advisors</td></tr>
+      <tr><td>CIMA® — Certified Investment Mgmt Analyst</td><td>Investments &amp; Wealth Institute</td><td>Investment consulting</td><td>Institutional / HNW advisors</td></tr>
+      <tr><td>CPWA® — Cert. Private Wealth Adviser</td><td>Investments &amp; Wealth Institute</td><td>HNW &amp; UHNW planning</td><td>Private wealth teams</td></tr>
+      <tr><td>CLU® — Chartered Life Underwriter</td><td>The American College</td><td>Life insurance &amp; estate planning</td><td>Insurance specialists</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SLIDE 20: COMP MODELS -->
+<div class="slide s-content" id="s20">
+  <div class="slide-label">Compensation models</div>
+  <h2>The Four Compensation Structures</h2>
+  <div class="deck-sub">How advisors are paid shapes what they recommend</div>
+  <div class="cards col2">
+    <div class="card green"><div class="c-label">AUM-based fees</div><h3>Most common model today</h3><p>Advisor charges a % of assets under management — typically 0.50%–1.25% annually, tiered by account size. Aligns advisor growth with client growth, but may discourage advice outside the managed account.</p></div>
+    <div class="card amber"><div class="c-label">Commission-based</div><h3>Transaction-driven</h3><p>Advisor earns a commission when a product is sold — mutual fund loads, annuity commissions (4–7%), insurance premiums. Creates potential incentive to trade or sell products more frequently.</p></div>
+    <div class="card green"><div class="c-label">Flat fee / retainer</div><h3>Growing, especially in RIA space</h3><p>Client pays a fixed annual fee (e.g., $5,000–$25,000/yr) for ongoing planning regardless of asset level. Increasingly popular for younger clients with high income but lower investable assets.</p></div>
+    <div class="card green"><div class="c-label">Hourly billing</div><h3>Least common; most transactional</h3><p>Client pays an hourly rate ($200–$500/hr) for defined engagements — a second opinion, a retirement income analysis, a specific planning question. No ongoing relationship.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 21: FEE ONLY vs FEE BASED -->
+<div class="slide s-content" id="s21">
+  <div class="slide-label">Compensation · Key distinction</div>
+  <h2>"Fee-Only" vs. "Fee-Based"</h2>
+  <div class="deck-sub">These sound similar but mean very different things — and the difference matters</div>
+  <div class="cards col2" style="margin-top:8px">
+    <div class="card teal"><div class="c-label">Fee-only</div><h3>No commissions — ever</h3><p>The advisor and their firm receive compensation only from client-paid fees. They do not accept commissions, trails, 12b-1 fees, or any third-party compensation. Lowest potential for conflicts. NAPFA membership requires fee-only status.</p></div>
+    <div class="card amber"><div class="c-label">Fee-based</div><h3>Fees AND commissions</h3><p>The advisor charges advisory fees on managed accounts but also earns commissions on products sold in brokerage accounts (annuities, insurance, mutual fund loads). Dually registered advisors are almost always fee-based.</p></div>
+  </div>
+  <div class="card coral" style="margin-top:12px"><div class="c-label">Watch out for</div><h3>Loose use of terminology in marketing</h3><p>Advisors and firms sometimes use "fee-based" and "fee-only" interchangeably in client-facing materials, even though they are legally and practically distinct. Clients should review Form CRS and Form ADV Part 2 to understand actual compensation arrangements.</p></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PART 5 — CLIENT SEGMENTS
+═══════════════════════════════════════ -->
+<!-- SLIDE 22: SECTION HEADER -->
+<div class="slide s-section" id="s22" style="background:linear-gradient(135deg,#0f1117,#1f0f1a)">
+  <div class="num">05</div>
+  <h2>Client Segments</h2>
+  <p>Wealth level drives everything from service model to staffing ratios to technology stack. The industry typically segments clients into four tiers based on investable assets.</p>
+</div>
+
+<!-- SLIDE 23: SEGMENTS TABLE -->
+<div class="slide s-content" id="s23">
+  <div class="slide-label">Client segments</div>
+  <h2>The Four Wealth Tiers</h2>
+  <div class="deck-sub">Service models, staffing, and typical providers vary significantly by tier</div>
+  <table>
+    <thead><tr><th>Segment</th><th>Investable assets</th><th>Typical service model</th><th>Common providers</th></tr></thead>
+    <tbody>
+      <tr><td>Mass market</td><td>&lt; $250K</td><td>Digital / robo-advisor, self-directed, group webinars</td><td>Vanguard, Betterment, Schwab Intelligent Portfolios, bank branches</td></tr>
+      <tr><td>Mass affluent</td><td>$250K – $1M</td><td>Advisor-led with standardized planning, light customization</td><td>IBDs, wirehouse branches, mid-size RIAs</td></tr>
+      <tr><td>High net worth (HNW)</td><td>$1M – $10M</td><td>Dedicated advisor, comprehensive planning, direct indexing, alternatives access</td><td>Wirehouses, larger RIAs, private bank lite</td></tr>
+      <tr><td>Ultra-HNW / Family Office</td><td>$10M+</td><td>Dedicated team, multi-generational planning, tax/legal coordination, concierge</td><td>Private banks, multi-family offices, elite RIAs, SFOs</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SLIDE 24: FAMILY OFFICE -->
+<div class="slide s-content" id="s24">
+  <div class="slide-label">Client segments · UHNW</div>
+  <h2>Family Office Structures</h2>
+  <div class="deck-sub">The most comprehensive — and complex — wealth management model</div>
+  <div class="cards col3">
+    <div class="card purple"><div class="c-label">Single-family office (SFO)</div><h3>One family, full staff</h3><p>A dedicated entity that employs investment, tax, legal, and administrative staff exclusively for one ultra-wealthy family. Typically requires $100M+ to justify $1–3M+ in annual overhead.</p></div>
+    <div class="card purple"><div class="c-label">Multi-family office (MFO)</div><h3>Shared SFO economics</h3><p>Delivers family office-level services to multiple families, spreading overhead. Services include consolidated reporting, alternatives access, estate/trust administration, and philanthropy coordination.</p></div>
+    <div class="card gray"><div class="c-label">Virtual family office</div><h3>Outsourced coordination</h3><p>An RIA or wealth manager acts as "quarterback," coordinating across the client's existing CPA, attorney, and other specialists. The most cost-effective model for the $5–$50M range.</p></div>
+  </div>
+</div>
+
+<!-- SLIDE 25: KEY TAKEAWAYS -->
+<div class="slide s-takeaway" id="s25">
+  <div class="slide-label">Summary</div>
+  <h2>Key takeaways</h2>
+  <div class="tklist">
+    <div class="tkitem"><div class="tknum">1</div><p>Finance is not one industry — it's a collection of distinct sectors (banking, asset management, insurance, advisory, infrastructure) with different customers, economics, and regulatory frameworks.</p></div>
+    <div class="tkitem"><div class="tknum">2</div><p>Asset managers and insurance companies are product manufacturers. Financial advisors are the distribution channel that selects and places those products with clients.</p></div>
+    <div class="tkitem"><div class="tknum">3</div><p>Within the advisory channel, firm type — wirehouse, RIA, IBD, or captive — determines the advisor's product shelf, regulatory obligations, and structural conflicts.</p></div>
+    <div class="tkitem"><div class="tknum">4</div><p>Registration type (BD vs. RIA) is the most important regulatory distinction. RIAs are held to a fiduciary standard; BD representatives are held to a suitability standard under Reg BI.</p></div>
+    <div class="tkitem"><div class="tknum">5</div><p>"Fee-only" and "fee-based" are not interchangeable. Only fee-only advisors are fully free from commission-based compensation conflicts.</p></div>
+    <div class="tkitem"><div class="tknum">6</div><p>Service models scale with wealth. Mass-market clients are served digitally; HNW clients get dedicated advisors; UHNW clients get dedicated teams. Matching model to complexity is the central business challenge.</p></div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div class="nav">
+  <button onclick="go(-1)">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 25</span>
+  <button onclick="go(1)">&#8594;</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const dotsEl=document.getElementById('dots');
+const counterEl=document.getElementById('counter');
+let cur=0;
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+});
+function goTo(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(slides.length-1,n));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  counterEl.textContent=(cur+1)+' / '+slides.length;
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(-1);
+});
+</script>
+</body>
+</html>
